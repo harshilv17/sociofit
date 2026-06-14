@@ -1,0 +1,19 @@
+# Gradle / Android Studio
+.gradle/
+build/
+/local.properties
+.idea/
+*.iml
+.kotlin/
+/captures
+.cxx/
+
+# Signing
+*.jks
+*.keystore
+*.p12
+*.key
+*.pem
+
+# macOS
+.DS_Store
