@@ -34,13 +34,16 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomeScreen(onOpen: (FitnessActivity) -> Unit, onSettings: () -> Unit, onPaywall: () -> Unit) {
-    val results = ACTIVITIES
+    var searching by remember { mutableStateOf(false) }
+    var query by remember { mutableStateOf("") }
+    val results = if (searching && query.isNotEmpty()) ACTIVITIES.filter { it.name.contains(query, ignoreCase = true) } else ACTIVITIES
 
     Column(Modifier.fillMaxSize()) {
         Row(
             Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
+            CircleButton("🔍") { searching = !searching; query = "" }
             CircleButton("⚙️", onSettings)
         }
         LazyColumn(
@@ -48,14 +51,32 @@ fun HomeScreen(onOpen: (FitnessActivity) -> Unit, onSettings: () -> Unit, onPayw
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item {
-                Text(
-                    "Share your fitness wins.",
-                    Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 8.dp),
-                    color = Theme.ink,
-                    fontFamily = FontFamily.Serif,
-                    fontSize = 28.sp,
-                    textAlign = TextAlign.Center,
-                )
+                if (searching) {
+                    val focus = remember { FocusRequester() }
+                    LaunchedEffect(Unit) { focus.requestFocus() }
+                    Row(
+                        Modifier.padding(top = 12.dp).fillMaxWidth().clip(RoundedCornerShape(14.dp))
+                            .background(Color.Black.copy(alpha = 0.06f)).padding(horizontal = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text("🔍", fontSize = 15.sp)
+                        Field(
+                            query, { query = it },
+                            Modifier.weight(1f).padding(vertical = 12.dp).focusRequester(focus),
+                            placeholder = "Search activities",
+                        )
+                    }
+                } else {
+                    Text(
+                        "Share your fitness wins.",
+                        Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 8.dp),
+                        color = Theme.ink,
+                        fontFamily = FontFamily.Serif,
+                        fontSize = 28.sp,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
             items(results, key = { it.name }) { activity ->
                 Row(

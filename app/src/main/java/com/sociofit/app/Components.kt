@@ -34,3 +34,26 @@ fun CircleButton(icon: String, onClick: () -> Unit) {
         contentAlignment = Alignment.Center,
     ) { Text(icon, fontSize = 16.sp) }
 }
+
+@Composable
+fun Field(
+    value: String,
+    onChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: String = "",
+    style: TextStyle = TextStyle(fontSize = 15.sp, color = Theme.ink),
+    singleLine: Boolean = true,
+) {
+    BasicTextField(
+        value, onChange, modifier,
+        textStyle = style,
+        singleLine = singleLine,
+        cursorBrush = SolidColor(Theme.ink),
+        decorationBox = { inner ->
+            Box(propagateMinConstraints = true) {
+                if (value.isEmpty()) Text(placeholder, style = style.copy(color = ink(0.4f)))
+                inner()
+            }
+        },
+    )
+}
