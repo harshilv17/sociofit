@@ -79,15 +79,17 @@ fun HomeScreen(onOpen: (FitnessActivity) -> Unit, onSettings: () -> Unit, onPayw
                 }
             }
             items(results, key = { it.name }) { activity ->
+                val locked = activity.pro && !Store.isPro
                 Row(
                     Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(activity.color)
-                        .clickable { onOpen(activity) }
+                        .clickable { if (locked) onPaywall() else onOpen(activity) }
                         .padding(horizontal = 18.dp, vertical = 20.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     Text(activity.emoji, fontSize = 16.sp)
                     Text(activity.name, Modifier.weight(1f), color = Theme.ink, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    if (locked) Text("🔒", Modifier.alpha(0.6f), fontSize = 13.sp)
                 }
             }
         }
