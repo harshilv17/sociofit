@@ -41,7 +41,25 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App() {
+    var activity by remember { mutableStateOf<FitnessActivity?>(null) }
+
     Box(Modifier.fillMaxSize().background(Theme.cream)) {
-        HomeScreen(onOpen = {}, onSettings = {}, onPaywall = {})
+        val current = activity
+        when {
+            current != null -> {
+                BackHandler { activity = null }
+                StickerEditorScreen(
+                    current,
+                    onBack = { activity = null },
+                    onSettings = {},
+                    onPaywall = {},
+                )
+            }
+            else -> HomeScreen(
+                onOpen = { activity = it },
+                onSettings = {},
+                onPaywall = {},
+            )
+        }
     }
 }

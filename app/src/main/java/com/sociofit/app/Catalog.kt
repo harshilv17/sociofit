@@ -154,3 +154,7 @@ object Theme {
 
 /** Theme ink at the given opacity. */
 fun ink(alpha: Float) = Theme.ink.copy(alpha = alpha)
+
+fun dateText(now: Date = Date()): String = SimpleDateFormat("dd MMM yyyy", Locale.UK).format(now).uppercase()
+fun timeText(now: Date = Date()): String = SimpleDateFormat("h:mm a", Locale.US).format(now)
+fun dateLine(): String = "${dateText()} · ${timeText()}"
