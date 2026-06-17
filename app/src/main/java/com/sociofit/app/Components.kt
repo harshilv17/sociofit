@@ -36,6 +36,61 @@ fun CircleButton(icon: String, onClick: () -> Unit) {
 }
 
 @Composable
+fun SectionTitle(text: String) {
+    Text(
+        text,
+        Modifier.padding(bottom = 8.dp),
+        color = ink(0.75f),
+        fontFamily = FontFamily.Monospace,
+        fontSize = 11.sp,
+        fontWeight = FontWeight.Bold,
+        letterSpacing = 1.5.sp,
+    )
+}
+
+@Composable
+fun Section(title: String, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+    Column(modifier) {
+        SectionTitle(title)
+        content()
+    }
+}
+
+@Composable
+fun SegmentRow(
+    options: List<String>,
+    selection: String,
+    locked: List<String> = emptyList(),
+    onLockedTap: () -> Unit = {},
+    onSelect: (String) -> Unit,
+) {
+    Row(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(Color.Black.copy(alpha = 0.08f)).padding(3.dp)
+    ) {
+        options.forEach { option ->
+            val isLocked = option in locked
+            val selected = option == selection
+            Box(
+                Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(if (selected) Theme.cardWhite else Color.Transparent)
+                    .clickable { if (isLocked) onLockedTap() else onSelect(option) }
+                    .padding(vertical = 11.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    option + if (isLocked) " 🔒" else "",
+                    color = Theme.ink,
+                    fontSize = 13.sp,
+                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun Field(
     value: String,
     onChange: (String) -> Unit,

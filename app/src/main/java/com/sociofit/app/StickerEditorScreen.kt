@@ -55,6 +55,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
+private val ASPECTS = linkedMapOf("9:16" to 9f / 16f, "3:4" to 3f / 4f, "1:1" to 1f)
+
 @Composable
 fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSettings: () -> Unit, onPaywall: () -> Unit) {
     var config by remember(activity) { mutableStateOf(defaultConfig(activity)) }
@@ -77,6 +79,16 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
             Box(Modifier.fillMaxWidth().background(config.background).padding(24.dp)) {
                 Box(Modifier.fillMaxWidth().aspectRatio(config.aspect), contentAlignment = Alignment.Center) {
                     StickerCard(activity, config)
+                }
+            }
+
+            Section("ASPECT RATIO") {
+                val label = ASPECTS.entries.firstOrNull { it.value == config.aspect }?.key ?: "9:16"
+                SegmentRow(ASPECTS.keys.toList(), label) { config = config.copy(aspect = ASPECTS.getValue(it)) }
+            }
+            Section("ALIGNMENT") {
+                SegmentRow(Align.entries.map { it.name }, config.alignment.name) {
+                    config = config.copy(alignment = Align.valueOf(it))
                 }
             }
         }
