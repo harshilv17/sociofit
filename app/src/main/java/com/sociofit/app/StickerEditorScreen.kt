@@ -60,6 +60,18 @@ private val ASPECTS = linkedMapOf("9:16" to 9f / 16f, "3:4" to 3f / 4f, "1:1" to
 @Composable
 fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSettings: () -> Unit, onPaywall: () -> Unit) {
     var config by remember(activity) { mutableStateOf(defaultConfig(activity)) }
+    var bgIndex by remember(activity) { mutableIntStateOf(0) }
+
+    // ponytail: first two swatches free, rest pro-locked
+    val swatches = listOf(
+        activity.color to false,
+        mix(activity.color, 0.45f) to false,
+        Color(0xFFCBE44B) to true,
+        Color(0xFF8FE08F) to true,
+        Color(0xFFEE7040) to true,
+        Color(0xFF4A5FD0) to true,
+        Theme.cream to true,
+    )
 
     Column(Modifier.fillMaxSize().background(config.background)) {
         Row(
@@ -85,6 +97,21 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
             Section("ASPECT RATIO") {
                 val label = ASPECTS.entries.firstOrNull { it.value == config.aspect }?.key ?: "9:16"
                 SegmentRow(ASPECTS.keys.toList(), label) { config = config.copy(aspect = ASPECTS.getValue(it)) }
+            }
+            Section("BACKGROUND") {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    swatches.forEachIndexed { i, (color, _) ->
+                        Box(
+                            Modifier.size(36.dp).clip(CircleShape).background(color)
+                                .border(1.dp, Color.Black.copy(alpha = 0.1f), CircleShape)
+                                .clickable {
+                                    bgIndex = i
+                                    config = config.copy(background = color)
+                                },
+                            contentAlignment = Alignment.Center,
+                        ) { Text(if (bgIndex == i) "✓" else "", fontSize = 12.sp) }
+                    }
+                }
             }
             Section("ALIGNMENT") {
                 SegmentRow(Align.entries.map { it.name }, config.alignment.name) {

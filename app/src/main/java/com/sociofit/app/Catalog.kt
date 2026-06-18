@@ -158,3 +158,9 @@ fun ink(alpha: Float) = Theme.ink.copy(alpha = alpha)
 fun dateText(now: Date = Date()): String = SimpleDateFormat("dd MMM yyyy", Locale.UK).format(now).uppercase()
 fun timeText(now: Date = Date()): String = SimpleDateFormat("h:mm a", Locale.US).format(now)
 fun dateLine(): String = "${dateText()} · ${timeText()}"
+
+/** Darkens a colour toward black by [black] (0..1). */
+fun mix(color: Color, black: Float): Color {
+    val k = 1 - black
+    return Color(color.red * k, color.green * k, color.blue * k)
+}
