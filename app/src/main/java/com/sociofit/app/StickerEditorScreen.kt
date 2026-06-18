@@ -113,6 +113,11 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
                     }
                 }
             }
+            Section("STATS COLOR") {
+                SegmentRow(listOf("White", "Black"), if (config.statsBlack) "Black" else "White") {
+                    config = config.copy(statsBlack = it == "Black")
+                }
+            }
             Section("ALIGNMENT") {
                 SegmentRow(Align.entries.map { it.name }, config.alignment.name) {
                     config = config.copy(alignment = Align.valueOf(it))
