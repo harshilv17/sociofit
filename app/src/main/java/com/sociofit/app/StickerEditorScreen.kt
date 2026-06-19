@@ -73,6 +73,10 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
         Theme.cream to true,
     )
 
+    fun setField(label: String, value: String) {
+        config = config.copy(fields = config.fields.map { if (it.label == label) it.copy(value = value) else it })
+    }
+
     Column(Modifier.fillMaxSize().background(config.background)) {
         Row(
             Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 4.dp),
@@ -123,6 +127,36 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
                     config = config.copy(alignment = Align.valueOf(it))
                 }
             }
+            Section("DETAILS") {
+                Card {
+                    config.fields.forEach { field ->
+                        Column(Modifier.fillMaxWidth().divider().padding(14.dp)) {
+                            val options = field.options
+                            if (options != null) {
+                                Text(field.label, color = ink(0.5f), fontSize = 15.sp)
+                                Spacer(Modifier.height(8.dp))
+                                SegmentRow(options, field.value) { setField(field.label, it) }
+                            } else {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(field.label, color = ink(0.5f), fontSize = 15.sp)
+                                    Field(
+                                        field.value, { setField(field.label, it) },
+                                        Modifier.weight(1f),
+                                        style = TextStyle(color = Theme.ink, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.End),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                Hint("Clear any field to remove it from the sticker. The layout rebalances automatically.")
+            }
+
         }
     }
+}
+
+@Composable
+private fun Hint(text: String) {
+    Text(text, Modifier.padding(top = 8.dp), color = ink(0.55f), fontSize = 12.sp)
 }

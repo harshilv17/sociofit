@@ -91,6 +91,11 @@ fun SegmentRow(
 }
 
 @Composable
+fun Card(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+    Column(modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Theme.cardWhite), content = content)
+}
+
+@Composable
 fun Field(
     value: String,
     onChange: (String) -> Unit,
@@ -111,4 +116,9 @@ fun Field(
             }
         },
     )
+}
+
+/** Hairline under a list row. */
+fun Modifier.divider(show: Boolean = true): Modifier = if (!show) this else drawBehind {
+    drawLine(Color.Black.copy(alpha = 0.1f), Offset(0f, size.height), Offset(size.width, size.height), strokeWidth = 1f)
 }
