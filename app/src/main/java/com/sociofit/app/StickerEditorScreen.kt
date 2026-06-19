@@ -148,6 +148,15 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
                             }
                         }
                     }
+                    Column(Modifier.fillMaxWidth().padding(14.dp)) {
+                        Text("Notes", color = ink(0.5f), fontSize = 15.sp)
+                        Field(
+                            config.notes, { config = config.copy(notes = it) },
+                            Modifier.fillMaxWidth().padding(top = 6.dp),
+                            placeholder = "Add a note",
+                            singleLine = false,
+                        )
+                    }
                 }
                 Hint("Clear any field to remove it from the sticker. The layout rebalances automatically.")
             }
