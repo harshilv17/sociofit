@@ -64,6 +64,16 @@ fun StickerCard(activity: FitnessActivity, config: StickerConfig) {
             color = fg, textAlign = textAlign,
             fontFamily = FontFamily.Monospace, fontSize = 13.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp,
         )
+        if (Store.city.isNotEmpty() || Store.country.isNotEmpty()) {
+            Text(
+                "${Store.flag} ${listOf(Store.city, Store.country).filter { it.isNotEmpty() }.joinToString(" · ")}",
+                Modifier.padding(top = 4.dp),
+                color = fg, textAlign = textAlign,
+                fontFamily = FontFamily.Monospace, fontSize = 10.sp, fontWeight = FontWeight.SemiBold,
+            )
+        }
+        val coords = Store.coordsText
+        if (config.showCoordinates && coords != null) Meta(coords, dim(0.55f), textAlign)
         Meta(dateLine(), dim(0.55f), textAlign)
 
         Spacer(Modifier.height(22.dp))
