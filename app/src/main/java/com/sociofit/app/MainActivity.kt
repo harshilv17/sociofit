@@ -41,7 +41,17 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App() {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var activity by remember { mutableStateOf<FitnessActivity?>(null) }
+
+    val askLocation = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+        if (result.values.any { it }) scope.launch { runCatching { Store.locate(context) } }
+    }
+
+    LaunchedEffect(Unit) {
+        askLocation.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
+    }
 
     Box(Modifier.fillMaxSize().background(Theme.cream)) {
         val current = activity

@@ -164,3 +164,6 @@ fun mix(color: Color, black: Float): Color {
     val k = 1 - black
     return Color(color.red * k, color.green * k, color.blue * k)
 }
+
+fun fmtLat(v: Double) = "%.4f° %s".format(Locale.US, abs(v), if (v >= 0) "N" else "S")
+fun fmtLon(v: Double) = "%.4f° %s".format(Locale.US, abs(v), if (v >= 0) "E" else "W")
