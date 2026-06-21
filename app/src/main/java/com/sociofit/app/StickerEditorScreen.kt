@@ -127,6 +127,12 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
                     config = config.copy(alignment = Align.valueOf(it))
                 }
             }
+            Section("COORDINATES") {
+                SegmentRow(listOf("Show", "Hide"), if (config.showCoordinates) "Show" else "Hide") {
+                    config = config.copy(showCoordinates = it == "Show")
+                }
+            }
+
             Section("DETAILS") {
                 Card {
                     config.fields.forEach { field ->
