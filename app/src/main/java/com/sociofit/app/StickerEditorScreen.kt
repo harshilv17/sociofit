@@ -161,6 +161,26 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
                 Hint("Clear any field to remove it from the sticker. The layout rebalances automatically.")
             }
 
+            Section("LOCATION & TIME", Modifier.padding(bottom = 24.dp)) {
+                val rows = listOf(
+                    "City" to Store.city,
+                    "Country" to Store.country,
+                    "Flag" to Store.flag,
+                    "Latitude" to (Store.latitude?.let(::fmtLat) ?: ""),
+                    "Longitude" to (Store.longitude?.let(::fmtLon) ?: ""),
+                    "Date" to dateText(),
+                    "Time" to timeText(),
+                )
+                Card {
+                    rows.forEachIndexed { i, (label, value) ->
+                        Row(Modifier.fillMaxWidth().divider(i < rows.lastIndex).padding(14.dp)) {
+                            Text(label, color = ink(0.5f), fontSize = 15.sp)
+                            Text(" $value", color = Theme.ink, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+                }
+                Hint("Automatically detected from your device. Enable Location Services in Settings if these are blank.")
+            }
         }
     }
 }
