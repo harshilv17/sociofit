@@ -158,6 +158,10 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
             PillButton(if (feedback == "Saved!") "Saved!" else "⬇  Download Image", Theme.ink, Color.White) {
                 scope.launch { runCatching { saveToGallery(context, capture()) }.onSuccess { flash("Saved!") } }
             }
+            PillButton(if (feedback == "Copied!") "Copied!" else "⧉  Copy Image", Color.White.copy(alpha = 0.55f), Theme.ink) {
+                scope.launch { runCatching { copyToClipboard(context, capture()) }.onSuccess { flash("Copied!") } }
+            }
+
             Section("DETAILS") {
                 Card {
                     config.fields.forEach { field ->
@@ -231,4 +235,12 @@ private suspend fun saveToGallery(context: Context, bitmap: Bitmap) = withContex
     val resolver = context.contentResolver
     val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values) ?: error("MediaStore insert failed")
     resolver.openOutputStream(uri)?.use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } ?: error("No output stream")
+}
+
+private suspend fun copyToClipboard(context: Context, bitmap: Bitmap) {
+    val file = File(context.cacheDir, "sticker.png")
+    withContext(Dispatchers.IO) { file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } }
+    val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
+    context.getSystemService(ClipboardManager::class.java)
+        .setPrimaryClip(ClipData.newUri(context.contentResolver, "Sticker", uri))
 }
