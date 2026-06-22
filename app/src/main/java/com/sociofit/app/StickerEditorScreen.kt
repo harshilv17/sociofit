@@ -59,8 +59,12 @@ private val ASPECTS = linkedMapOf("9:16" to 9f / 16f, "3:4" to 3f / 4f, "1:1" to
 
 @Composable
 fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSettings: () -> Unit, onPaywall: () -> Unit) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var config by remember(activity) { mutableStateOf(defaultConfig(activity)) }
     var bgIndex by remember(activity) { mutableIntStateOf(0) }
+    var feedback by remember { mutableStateOf("") }
+    val layer = rememberGraphicsLayer()
 
     // ponytail: first two swatches free, rest pro-locked
     val swatches = listOf(
@@ -72,6 +76,14 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
         Color(0xFF4A5FD0) to true,
         Theme.cream to true,
     )
+
+    fun flash(msg: String) {
+        feedback = msg
+        scope.launch { delay(1500); feedback = "" }
+    }
+
+    // Hardware bitmaps can't be compressed; copy to a software one.
+    suspend fun capture(): Bitmap = layer.toImageBitmap().asAndroidBitmap().copy(Bitmap.Config.ARGB_8888, false)
 
     fun setField(label: String, value: String) {
         config = config.copy(fields = config.fields.map { if (it.label == label) it.copy(value = value) else it })
@@ -92,7 +104,17 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
             Modifier.verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            Box(Modifier.fillMaxWidth().background(config.background).padding(24.dp)) {
+            // Everything inside this box is what gets saved / copied.
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .drawWithContent {
+                        layer.record { this@drawWithContent.drawContent() }
+                        drawLayer(layer)
+                    }
+                    .background(config.background)
+                    .padding(24.dp)
+            ) {
                 Box(Modifier.fillMaxWidth().aspectRatio(config.aspect), contentAlignment = Alignment.Center) {
                     StickerCard(activity, config)
                 }
@@ -133,6 +155,9 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
                 }
             }
 
+            PillButton(if (feedback == "Saved!") "Saved!" else "⬇  Download Image", Theme.ink, Color.White) {
+                scope.launch { runCatching { saveToGallery(context, capture()) }.onSuccess { flash("Saved!") } }
+            }
             Section("DETAILS") {
                 Card {
                     config.fields.forEach { field ->
@@ -194,4 +219,16 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
 @Composable
 private fun Hint(text: String) {
     Text(text, Modifier.padding(top = 8.dp), color = ink(0.55f), fontSize = 12.sp)
+}
+
+/** Saves to Pictures/SocioFit. API 29+ needs no storage permission for this. */
+private suspend fun saveToGallery(context: Context, bitmap: Bitmap) = withContext(Dispatchers.IO) {
+    val values = ContentValues().apply {
+        put(MediaStore.Images.Media.DISPLAY_NAME, "sociofit-${System.currentTimeMillis()}.png")
+        put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+        put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/SocioFit")
+    }
+    val resolver = context.contentResolver
+    val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values) ?: error("MediaStore insert failed")
+    resolver.openOutputStream(uri)?.use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } ?: error("No output stream")
 }

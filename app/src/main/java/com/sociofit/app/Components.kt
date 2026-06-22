@@ -96,6 +96,14 @@ fun Card(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> U
 }
 
 @Composable
+fun PillButton(text: String, background: Color, foreground: Color, onClick: () -> Unit) {
+    Box(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(26.dp)).background(background).clickable(onClick = onClick).padding(vertical = 16.dp),
+        contentAlignment = Alignment.Center,
+    ) { Text(text, color = foreground, fontSize = 16.sp, fontWeight = FontWeight.SemiBold) }
+}
+
+@Composable
 fun Field(
     value: String,
     onChange: (String) -> Unit,
