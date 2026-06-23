@@ -44,6 +44,7 @@ fun App() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var activity by remember { mutableStateOf<FitnessActivity?>(null) }
+    var settings by remember { mutableStateOf(false) }
 
     val askLocation = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
         if (result.values.any { it }) scope.launch { runCatching { Store.locate(context) } }
@@ -61,15 +62,27 @@ fun App() {
                 StickerEditorScreen(
                     current,
                     onBack = { activity = null },
-                    onSettings = {},
+                    onSettings = { settings = true },
                     onPaywall = {},
                 )
             }
             else -> HomeScreen(
                 onOpen = { activity = it },
-                onSettings = {},
+                onSettings = { settings = true },
                 onPaywall = {},
             )
         }
+        // Later sheets draw on top, and their BackHandlers take priority.
+        Sheet(settings, onClose = { settings = false }) {
+            SettingsScreen(onBack = { settings = false }, onPaywall = {})
+        }
     }
+}
+
+/** Full-screen overlay for settings and paywall. */
+@Composable
+private fun Sheet(visible: Boolean, onClose: () -> Unit, content: @Composable () -> Unit) {
+    if (!visible) return
+    BackHandler(onBack = onClose)
+    Box(Modifier.fillMaxSize().background(Theme.cream).pointerInput(Unit) {}) { content() }
 }
