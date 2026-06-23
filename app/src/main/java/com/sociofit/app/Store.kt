@@ -18,6 +18,7 @@ import kotlin.coroutines.resume
 // ponytail: in-memory app state; Pro isn't persisted across launches.
 object Store {
     var isPro by mutableStateOf(false)
+    var stickerFont by mutableStateOf(FONTS[1])
     var city by mutableStateOf("")
     var country by mutableStateOf("")
     var flag by mutableStateOf("")

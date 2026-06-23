@@ -66,6 +66,28 @@ fun SettingsScreen(onBack: () -> Unit, onPaywall: () -> Unit) {
                 }
             }
 
+            Section("FONT FOR STICKERS") {
+                Card {
+                    FONTS.forEachIndexed { i, font ->
+                        val locked = font.pro && !Store.isPro
+                        Row(
+                            Modifier.fillMaxWidth().divider(i < FONTS.lastIndex)
+                                .clickable { if (locked) onPaywall() else Store.stickerFont = font }
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                font.name,
+                                color = if (locked) ink(0.4f) else Theme.ink,
+                                fontSize = 18.sp, fontFamily = font.family, fontWeight = font.weight,
+                            )
+                            Text(if (locked) "🔒" else if (Store.stickerFont == font) "✓" else "", fontSize = 13.sp)
+                        }
+                    }
+                }
+            }
+
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("🇦🇪 Made in Dubai", color = ink(0.5f), fontSize = 13.sp)
                 Text("Version 1.0.0", Modifier.padding(top = 4.dp), color = ink(0.5f), fontSize = 13.sp)

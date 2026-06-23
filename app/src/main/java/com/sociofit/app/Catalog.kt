@@ -146,6 +146,22 @@ val ACTIVITIES = listOf(
     )),
 )
 
+data class StickerFont(
+    val name: String,
+    val family: FontFamily,
+    val weight: FontWeight,
+    val pro: Boolean,
+)
+
+val FONTS = listOf(
+    StickerFont("Studio", FontFamily.Monospace, FontWeight.Normal, pro = true),
+    StickerFont("Serene", FontFamily.SansSerif, FontWeight.Normal, pro = false),
+    StickerFont("Heritage", FontFamily.SansSerif, FontWeight.Medium, pro = true),
+    StickerFont("Editorial", FontFamily.Serif, FontWeight.Normal, pro = true),
+    StickerFont("Aura", FontFamily.SansSerif, FontWeight.Light, pro = true),
+    StickerFont("Prestige", FontFamily.Serif, FontWeight.Normal, pro = true),
+)
+
 object Theme {
     val cream = Color(0xFFF4F0E6)
     val ink = Color(0xFF1A191C)

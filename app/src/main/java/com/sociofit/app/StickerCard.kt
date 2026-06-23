@@ -53,7 +53,9 @@ fun StickerCard(activity: FitnessActivity, config: StickerConfig) {
         Align.Center -> Alignment.CenterHorizontally to TextAlign.Center
         Align.Right -> Alignment.End to TextAlign.Right
     }
-    val numberFamily = FontFamily.Monospace
+    val font = Store.stickerFont
+    // Plain sans (Serene) shows numbers in monospace; other fonts use their own family.
+    val numberFamily = if (font.family == FontFamily.SansSerif && font.weight == FontWeight.Normal) FontFamily.Monospace else font.family
 
     Column(
         Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(Theme.cardWhite).padding(22.dp),
@@ -103,7 +105,7 @@ fun StickerCard(activity: FitnessActivity, config: StickerConfig) {
         if (config.notes.isNotEmpty()) {
             Text(
                 config.notes, Modifier.padding(top = 10.dp),
-                color = dim(0.7f), fontSize = 12.sp,
+                color = dim(0.7f), fontSize = 12.sp, fontFamily = font.family, fontWeight = font.weight,
             )
         }
     }
