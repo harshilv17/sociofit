@@ -45,6 +45,7 @@ fun App() {
     val scope = rememberCoroutineScope()
     var activity by remember { mutableStateOf<FitnessActivity?>(null) }
     var settings by remember { mutableStateOf(false) }
+    var paywall by remember { mutableStateOf(false) }
 
     val askLocation = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
         if (result.values.any { it }) scope.launch { runCatching { Store.locate(context) } }
@@ -63,18 +64,21 @@ fun App() {
                     current,
                     onBack = { activity = null },
                     onSettings = { settings = true },
-                    onPaywall = {},
+                    onPaywall = { paywall = true },
                 )
             }
             else -> HomeScreen(
                 onOpen = { activity = it },
                 onSettings = { settings = true },
-                onPaywall = {},
+                onPaywall = { paywall = true },
             )
         }
         // Later sheets draw on top, and their BackHandlers take priority.
         Sheet(settings, onClose = { settings = false }) {
-            SettingsScreen(onBack = { settings = false }, onPaywall = {})
+            SettingsScreen(onBack = { settings = false }, onPaywall = { paywall = true })
+        }
+        Sheet(paywall, onClose = { paywall = false }) {
+            PaywallScreen(onClose = { paywall = false })
         }
     }
 }
