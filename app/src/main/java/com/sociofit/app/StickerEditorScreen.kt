@@ -120,22 +120,32 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
                 }
             }
 
+            Section("TEMPLATE") {
+                SegmentRow(
+                    listOf("Editorial", "Grid", "Minimal"), "Editorial",
+                    locked = if (Store.isPro) emptyList() else listOf("Grid", "Minimal"),
+                    onLockedTap = onPaywall,
+                ) {}
+            }
             Section("ASPECT RATIO") {
                 val label = ASPECTS.entries.firstOrNull { it.value == config.aspect }?.key ?: "9:16"
                 SegmentRow(ASPECTS.keys.toList(), label) { config = config.copy(aspect = ASPECTS.getValue(it)) }
             }
             Section("BACKGROUND") {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    swatches.forEachIndexed { i, (color, _) ->
+                    swatches.forEachIndexed { i, (color, pro) ->
+                        val locked = pro && !Store.isPro
                         Box(
                             Modifier.size(36.dp).clip(CircleShape).background(color)
                                 .border(1.dp, Color.Black.copy(alpha = 0.1f), CircleShape)
                                 .clickable {
-                                    bgIndex = i
-                                    config = config.copy(background = color)
+                                    if (locked) onPaywall() else {
+                                        bgIndex = i
+                                        config = config.copy(background = color)
+                                    }
                                 },
                             contentAlignment = Alignment.Center,
-                        ) { Text(if (bgIndex == i) "✓" else "", fontSize = 12.sp) }
+                        ) { Text(if (bgIndex == i) "✓" else if (locked) "🔒" else "", fontSize = 12.sp) }
                     }
                 }
             }
