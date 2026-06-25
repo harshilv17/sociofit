@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
 fun App() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    var splash by remember { mutableStateOf(true) }
     var activity by remember { mutableStateOf<FitnessActivity?>(null) }
     var settings by remember { mutableStateOf(false) }
     var paywall by remember { mutableStateOf(false) }
@@ -53,11 +54,16 @@ fun App() {
 
     LaunchedEffect(Unit) {
         askLocation.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
+        delay(1400)
+        splash = false
     }
 
     Box(Modifier.fillMaxSize().background(Theme.cream)) {
         val current = activity
         when {
+            splash -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Share your fitness wins.", color = ink(0.5f), fontSize = 16.sp)
+            }
             current != null -> {
                 BackHandler { activity = null }
                 StickerEditorScreen(
