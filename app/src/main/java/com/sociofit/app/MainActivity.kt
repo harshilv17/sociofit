@@ -89,10 +89,12 @@ fun App() {
     }
 }
 
-/** Full-screen overlay for settings and paywall. */
+/** Full-screen slide-up overlay for settings and paywall. */
 @Composable
 private fun Sheet(visible: Boolean, onClose: () -> Unit, content: @Composable () -> Unit) {
-    if (!visible) return
-    BackHandler(onBack = onClose)
-    Box(Modifier.fillMaxSize().background(Theme.cream).pointerInput(Unit) {}) { content() }
+    if (visible) BackHandler(onBack = onClose)
+    AnimatedVisibility(visible, enter = slideInVertically { it }, exit = slideOutVertically { it }) {
+        // pointerInput blocks taps from reaching the screen underneath.
+        Box(Modifier.fillMaxSize().background(Theme.cream).pointerInput(Unit) {}) { content() }
+    }
 }
