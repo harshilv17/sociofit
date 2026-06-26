@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -105,7 +104,7 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             // Everything inside this box is what gets saved / copied.
-            Box(
+            BoxWithConstraints(
                 Modifier
                     .fillMaxWidth()
                     .drawWithContent {
@@ -115,7 +114,8 @@ fun StickerEditorScreen(activity: FitnessActivity, onBack: () -> Unit, onSetting
                     .background(config.background)
                     .padding(24.dp)
             ) {
-                Box(Modifier.fillMaxWidth().aspectRatio(config.aspect), contentAlignment = Alignment.Center) {
+                // Aspect sets the minimum height; tall stickers grow instead of clipping.
+                Box(Modifier.fillMaxWidth().heightIn(min = maxWidth / config.aspect), contentAlignment = Alignment.Center) {
                     StickerCard(activity, config)
                 }
             }
