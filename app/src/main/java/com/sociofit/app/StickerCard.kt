@@ -122,7 +122,12 @@ private fun Primary(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, horizontalAlignment = align) {
-        Text(field.value, maxLines = 1, color = color, fontSize = size, fontWeight = FontWeight.Bold, fontFamily = family)
+        BasicText(
+            field.value,
+            maxLines = 1,
+            style = TextStyle(color = color, fontSize = size, fontWeight = FontWeight.Bold, fontFamily = family),
+            autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = size),
+        )
         Meta(field.label, labelColor)
     }
 }
