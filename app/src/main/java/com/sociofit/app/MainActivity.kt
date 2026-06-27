@@ -35,6 +35,8 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val clear = android.graphics.Color.TRANSPARENT
+        enableEdgeToEdge(SystemBarStyle.light(clear, clear), SystemBarStyle.light(clear, clear))
         setContent { App() }
     }
 }
@@ -58,7 +60,7 @@ fun App() {
         splash = false
     }
 
-    Box(Modifier.fillMaxSize().background(Theme.cream)) {
+    Box(Modifier.fillMaxSize().background(Theme.cream).safeDrawingPadding()) {
         val current = activity
         when {
             splash -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
