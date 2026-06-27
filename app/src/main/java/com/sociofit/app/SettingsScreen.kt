@@ -24,8 +24,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+private val ABOUT_LINKS = listOf(
+    "Official Website" to "https://sociofit.app",
+    "Follow us on Instagram" to "https://instagram.com/sociofit.app",
+    "Subscribe to Newsletter" to "https://sociofit.app/newsletter",
+    "Submit Feedback" to "mailto:hello@sociofit.app?subject=Feedback",
+    "Restore Purchases" to null,
+    "Share App" to "https://sociofit.app",
+    "Rate App" to "https://play.google.com/store",
+    "Terms of Use" to "https://sociofit.app/terms",
+    "Privacy Policy" to "https://sociofit.app/privacy",
+    "Contact" to "mailto:hello@sociofit.app",
+)
+
 @Composable
 fun SettingsScreen(onBack: () -> Unit, onPaywall: () -> Unit) {
+    val uriHandler = LocalUriHandler.current
+
     Column(Modifier.fillMaxSize()) {
         Box(Modifier.padding(start = 16.dp, top = 8.dp)) { CircleButton("←", onBack) }
         Column(
@@ -83,6 +98,23 @@ fun SettingsScreen(onBack: () -> Unit, onPaywall: () -> Unit) {
                                 fontSize = 18.sp, fontFamily = font.family, fontWeight = font.weight,
                             )
                             Text(if (locked) "🔒" else if (Store.stickerFont == font) "✓" else "", fontSize = 13.sp)
+                        }
+                    }
+                }
+            }
+
+            Section("ABOUT") {
+                Card {
+                    ABOUT_LINKS.forEachIndexed { i, (label, url) ->
+                        Row(
+                            Modifier.fillMaxWidth().divider(i < ABOUT_LINKS.lastIndex)
+                                .clickable { url?.let { runCatching { uriHandler.openUri(it) } } }
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(label, color = Theme.ink, fontSize = 16.sp)
+                            Text("›", color = ink(0.4f))
                         }
                     }
                 }
