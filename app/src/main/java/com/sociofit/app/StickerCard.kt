@@ -108,6 +108,16 @@ fun StickerCard(activity: FitnessActivity, config: StickerConfig) {
                 color = dim(0.7f), fontSize = 12.sp, fontFamily = font.family, fontWeight = font.weight,
             )
         }
+        if (!Store.isPro) {
+            Text(
+                buildAnnotatedString {
+                    append("Made with SocioFit ")
+                    withStyle(SpanStyle(color = Color(0xB3F06E8C))) { append("♥") }
+                },
+                Modifier.align(Alignment.CenterHorizontally).padding(top = 14.dp),
+                color = ink(0.35f), fontSize = 10.sp,
+            )
+        }
     }
 }
 
