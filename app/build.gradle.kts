@@ -15,7 +15,7 @@ android {
         minSdk = 29 // Android 10+: MediaStore saves need no storage permission
         targetSdk = 36
         versionCode = 1
-        versionName = "0.1.0"
+        versionName = "1.0.0"
     }
 
     buildFeatures { compose = true }
